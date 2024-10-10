@@ -1,0 +1,36 @@
+.home {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f2f0e9;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+  margin-top: 10%;
+  margin-bottom: 10%;
+}
+
+.head {
+  background-color: white;
+  border: 2px solid #b3b0a6;
+  border-radius: 7px;
+  text-align: center;
+}
+
+.head h3 {
+  margin: 5px 0px 8px 0px;
+  font-size: 27px;
+  font-weight: 300;
+  color: #524f46;
+}
+
+.form {
+  background-color: white;
+  border: 2px solid #b3b0a6;
+  border-radius: 7px;
+  margin-top: 15px;
+  padding: 10px;
+}

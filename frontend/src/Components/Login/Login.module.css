@@ -1,0 +1,23 @@
+.login {
+  margin-top: 15px;
+}
+.login p {
+  font-size: 12px;
+  font-weight: 900;
+  margin-top: 5px;
+}
+
+input[type="text"] {
+  width: 100%;
+  border: none;
+  background-color: #f8f8f7;
+  margin-top: 5px;
+  padding: 2px;
+}
+
+.submit {
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+  font-size: 12px;
+}
