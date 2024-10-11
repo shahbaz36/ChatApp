@@ -10,13 +10,17 @@ export function Button({ activeButton, setActiveButton }) {
   return (
     <div className={styles.btn}>
       <button
-        className={activeButton === `login` ? `${styles.active}` : ""}
+        className={
+          activeButton === `login` ? `${styles.active}` : `${styles.inactive}`
+        }
         onClick={handleLogIn}
       >
         Log in
       </button>
       <button
-        className={activeButton === `signup` ? `${styles.active}` : ""}
+        className={
+          activeButton === `signup` ? `${styles.active}` : `${styles.inactive}`
+        }
         onClick={handleSignUp}
       >
         Sign up

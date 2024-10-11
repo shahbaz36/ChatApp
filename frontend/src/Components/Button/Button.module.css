@@ -15,6 +15,10 @@
 
 .active {
   font-size: 20px;
-  color: #3d3929;
+  color: white;
   background-color: #d97757;
+}
+
+.inactive {
+  background-color: white;
 }

@@ -2,14 +2,15 @@
   display: flex;
   justify-content: center;
   height: 100vh;
-  background-color: #f2f0e9;
+  background-color: #f5f4ef;
 }
 
 .container {
   display: flex;
   flex-direction: column;
+  min-width: 410px;
   width: 30vw;
-  margin-top: 10%;
+  margin-top: 8%;
   margin-bottom: 10%;
 }
 
@@ -23,14 +24,14 @@
 .head h3 {
   margin: 5px 0px 8px 0px;
   font-size: 27px;
-  font-weight: 300;
-  color: #524f46;
+  font-weight: bold;
+  color: #3d3929;
 }
 
 .form {
-  background-color: white;
+  background-color: #f2f0e9;
   border: 2px solid #b3b0a6;
   border-radius: 7px;
   margin-top: 15px;
-  padding: 10px;
+  padding: 30px;
 }
