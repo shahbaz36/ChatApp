@@ -70,7 +70,72 @@ export function SignUp() {
       }
     }
   };
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Add your signup logic here
+    setIsLoading(true);
+
+    //Upload Image to cloudinary
+    postDetails(pic);
+
+    //Check if all fields are filled
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.password ||
+      !formData.passwordConfirm
+    ) {
+      alert("Please fill all the fields before submitting");
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.passwordConfirm) {
+      alert("Password and confirm Password does not match");
+      setIsLoading(false);
+      return;
+    }
+
+    //POST /api/v1/users
+    //To signup the user
+    try {
+      const config = {
+        headers: {
+          "content-type": "application/json",
+        },
+      };
+      const { name, email, password, passwordConfirm } = {
+        ...formData,
+      };
+
+      const { data } = await axios.post(
+        "/api/v1/users",
+        {
+          name,
+          email,
+          password,
+          passwordConfirm,
+          picUrl,
+        },
+        config
+      );
+
+      //Save the response of post request in local storage
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      //Redirect user to the Chat page
+      navigate("/chats");
+
+      alert("User created succesfully");
+    } catch (e) {
+      console.log(e);
+      alert("Error while making request to backend");
+      setIsLoading(false);
+    }
+
+    setIsLoading(false);
+  };
+
   return (
     <form className={styles.signup} onSubmit={handleSubmit}>
       <label htmlFor="name">Name*</label>
