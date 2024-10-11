@@ -3,6 +3,7 @@ const express = require("express");
 const GEH = require("./controllers/errorController");
 const userRoute = require("./routes/userRoutes");
 const AppError = require("./utils/AppError");
+const cors = require("cors");
 
 process.on("uncaughtException", (err) => {
   console.log(err.name, err.message);
@@ -12,6 +13,7 @@ process.on("uncaughtException", (err) => {
 });
 
 const app = express();
+app.use(cors());
 
 //To parse incoming request
 app.use(express.json());
