@@ -36,10 +36,11 @@ export function SignUp() {
 
   const postDetails = async (pic) => {
     if (pic === undefined) {
-      console.log("Please select an image");
+      alert("Please select an Image");
       return;
     }
 
+    //Cloudinary
     const cloud_name = "dfs1zgypv";
     if (pic) {
       if (pic.type === "image/jpeg" || pic.type === "image/png") {
@@ -70,35 +71,39 @@ export function SignUp() {
       }
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Add your signup logic here
     setIsLoading(true);
 
-    //Upload Image to cloudinary
-    postDetails(pic);
-
-    //Check if all fields are filled
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.password ||
-      !formData.passwordConfirm
-    ) {
-      alert("Please fill all the fields before submitting");
-      setIsLoading(false);
-      return;
-    }
-
-    if (formData.password !== formData.passwordConfirm) {
-      alert("Password and confirm Password does not match");
-      setIsLoading(false);
-      return;
-    }
-
-    //POST /api/v1/users
-    //To signup the user
     try {
+      //Check if all fields are filled
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.password ||
+        !formData.passwordConfirm
+      ) {
+        alert("Please fill all the fields before submitting");
+        setIsLoading(false);
+        return;
+      }
+
+      if (formData.password !== formData.passwordConfirm) {
+        alert("Password and confirm Password does not match");
+        setIsLoading(false);
+        return;
+      }
+
+      //Upload Image to cloudinary
+      if (pic) {
+        await postDetails(pic);
+      }
+
+      //POST /api/v1/users
+      //To signup the user
+
       const config = {
         headers: {
           "content-type": "application/json",
