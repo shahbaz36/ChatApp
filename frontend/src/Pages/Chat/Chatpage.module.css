@@ -1,0 +1,5 @@
+.container {
+  display: flex;
+  background-color: lightblue;
+  height: calc(100vh - 50px);
+}
