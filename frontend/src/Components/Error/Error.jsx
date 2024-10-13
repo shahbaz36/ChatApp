@@ -11,7 +11,7 @@ const ErrorPopup = ({ message }) => {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isVisible]);
 
   if (!isVisible) return null;
 

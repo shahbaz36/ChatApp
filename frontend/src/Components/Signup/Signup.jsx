@@ -3,10 +3,10 @@ import styles from "./Signup.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
+import ErrorPopup from "../Error/Error";
 
 export function SignUp() {
   const [pic, setPic] = useState(null);
-
   const [picUrl, setPicUrl] = useState(
     "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
   );
@@ -17,7 +17,7 @@ export function SignUp() {
     passwordConfirm: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -36,20 +36,19 @@ export function SignUp() {
 
   const postDetails = async (pic) => {
     if (pic === undefined) {
-      alert("Please select an Image");
-      return;
+      throw new Error("Please select an image");
     }
 
     //Cloudinary
     const cloud_name = "dfs1zgypv";
-    if (pic) {
-      if (pic.type === "image/jpeg" || pic.type === "image/png") {
-        const data = new FormData();
-        data.append("file", pic);
-        data.append("upload_preset", "chatapp");
-        data.append("cloud_name", `${cloud_name}`);
+    try {
+      if (pic) {
+        if (pic.type === "image/jpeg" || pic.type === "image/png") {
+          const data = new FormData();
+          data.append("file", pic);
+          data.append("upload_preset", "chatapp");
+          data.append("cloud_name", `${cloud_name}`);
 
-        try {
           const result = await fetch(
             `https://api.cloudinary.com/v1_1/${cloud_name}/upload`,
             {
@@ -58,24 +57,27 @@ export function SignUp() {
             }
           );
           const response = await result.json();
+          if (!response.url) {
+            throw new Error("Image upload failed");
+          }
           const url = response.url.toString();
           setPicUrl(url);
-        } catch (error) {
-          console.log(error);
-          alert("Error while uploading photo");
-          return;
+        } else {
+          throw new Error("Please select an image with jpeg or png format");
         }
-      } else {
-        alert("Please select an image with jpeg or png format");
-        return;
       }
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+      throw error;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your signup logic here
+
     setIsLoading(true);
+    setError("");
 
     try {
       //Check if all fields are filled
@@ -85,15 +87,11 @@ export function SignUp() {
         !formData.password ||
         !formData.passwordConfirm
       ) {
-        alert("Please fill all the fields before submitting");
-        setIsLoading(false);
-        return;
+        throw new Error("Please fill all the fields before submitting");
       }
 
       if (formData.password !== formData.passwordConfirm) {
-        alert("Password and confirm Password does not match");
-        setIsLoading(false);
-        return;
+        throw new Error("Password and confirm Password does not match");
       }
 
       //Upload Image to cloudinary
@@ -103,7 +101,6 @@ export function SignUp() {
 
       //POST /api/v1/users
       //To signup the user
-
       const config = {
         headers: {
           "content-type": "application/json",
@@ -134,68 +131,73 @@ export function SignUp() {
       alert("User created succesfully");
     } catch (e) {
       console.log(e);
-      alert("Error while making request to backend");
+      if (e.response) {
+        if (e.response.data.error.code === 11000)
+          setError("A user already exist with the provided Email");
+      } else setError("Error: " + error.message);
+    } finally {
       setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
-    <form className={styles.signup} onSubmit={handleSubmit}>
-      <label htmlFor="name">Name*</label>
-      <input
-        type="text"
-        id="name"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
+    <div>
+      <form className={styles.signup} onSubmit={handleSubmit}>
+        <label htmlFor="name">Name*</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
 
-      <label htmlFor="email">Email*</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-      />
+        <label htmlFor="email">Email*</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
 
-      <label htmlFor="password">Password*</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        value={formData.password}
-        onChange={handleChange}
-        required
-      />
+        <label htmlFor="password">Password*</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
-      <label htmlFor="passwordConfirm">Confirm Password*</label>
-      <input
-        type="password"
-        id="passwordConfirm"
-        name="passwordConfirm"
-        value={formData.passwordConfirm}
-        onChange={handleChange}
-        required
-      />
+        <label htmlFor="passwordConfirm">Confirm Password*</label>
+        <input
+          type="password"
+          id="passwordConfirm"
+          name="passwordConfirm"
+          value={formData.passwordConfirm}
+          onChange={handleChange}
+          required
+        />
 
-      <label htmlFor="photo">Upload your picture</label>
-      <input
-        type="file"
-        id="photo"
-        name="photo"
-        className={styles.photo}
-        onChange={handlePhoto}
-        accept="image/*"
-      />
+        <label htmlFor="photo">Upload your picture</label>
+        <input
+          type="file"
+          id="photo"
+          name="photo"
+          className={styles.photo}
+          onChange={handlePhoto}
+          accept="image/*"
+        />
 
-      <button type="submit" className={styles.submit}>
-        {isLoading ? <Spinner /> : "Signup"}
-      </button>
-    </form>
+        <button type="submit" className={styles.submit}>
+          {isLoading ? <Spinner /> : "Signup"}
+        </button>
+      </form>
+      {error && <ErrorPopup message={error} />}
+    </div>
   );
 }
