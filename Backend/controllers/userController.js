@@ -5,9 +5,7 @@ const AppError = require("../utils/AppError");
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
   if (!users) {
-    return next(
-      new AppError("There was an error while creating new user", 500)
-    );
+    return next(new AppError("0 users found", 500));
   }
 
   res.status(201).json({

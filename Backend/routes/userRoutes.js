@@ -7,11 +7,7 @@ const Router = express.Router();
 //TODO Add restriction to admin only for get request
 Router.route("/")
   .post(authController.signUp)
-  .get(
-    authController.protect,
-    authController.restrictTo("admin"),
-    userController.getAllUsers
-  );
+  .get(authController.protect, userController.getAllUsers);
 
 Router.route("/signin").post(authController.signIn);
 

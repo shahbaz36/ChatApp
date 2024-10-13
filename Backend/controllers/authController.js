@@ -28,7 +28,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
   const token = signToken(newUser._id);
 
-  res.status(201).json({
+  res.cookie("jwt", token, { secure: true, httOnly: true }).status(201).json({
     status: "created",
     token,
     data: {
@@ -52,7 +52,7 @@ exports.signIn = catchAsync(async function (req, res, next) {
 
   const token = signToken(user._id);
 
-  res.status(200).json({
+  res.cookie("jwt", token, { secure: true, httOnly: true }).status(200).json({
     status: "Success",
     token,
   });
