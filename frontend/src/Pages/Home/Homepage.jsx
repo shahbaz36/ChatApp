@@ -7,13 +7,14 @@ import { ChatContext } from "../../Context/ChatContext";
 import { useNavigate } from "react-router-dom";
 
 function Homepage() {
-  const { user } = useContext(ChatContext);
   const [activeButton, setActiveButton] = useState("login");
   const navigate = useNavigate();
+  const { user } = useContext(ChatContext);
 
   useEffect(() => {
     if (user) navigate("/chats");
-  });
+  }, [user, navigate]);
+
   return (
     <div className={styles.home}>
       <div className={styles.container}>

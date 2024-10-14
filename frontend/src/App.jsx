@@ -4,6 +4,7 @@ import Homepage from "./Pages/Home/Homepage";
 import Chatpage from "./Pages/Chat/Chatpage";
 import { CookiesProvider } from "react-cookie";
 import { ChatProvider } from "./Context/ChatContext";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   return (
@@ -11,7 +12,14 @@ function App() {
       <ChatProvider>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/chats" element={<Chatpage />} />
+          <Route
+            path="/chats"
+            element={
+              <ProtectedRoute>
+                <Chatpage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </ChatProvider>
     </CookiesProvider>
