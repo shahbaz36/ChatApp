@@ -14,7 +14,10 @@ input {
   border: none;
   background-color: white;
   margin-top: 5px;
-  padding: 8px;
+  padding: 8px 8px 8px 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  outline: none;
 }
 
 .submit {
