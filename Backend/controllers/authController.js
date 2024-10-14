@@ -71,7 +71,7 @@ exports.protect = catchAsync(async function (req, res, next) {
   if (!token) {
     return next(
       new AppError(
-        "You are not authorized to access these routes. Please login and try again",
+        "You are not authorized to access this route. Please login and try again",
         401
       )
     );

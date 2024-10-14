@@ -2,6 +2,7 @@ const express = require("express");
 
 const GEH = require("./controllers/errorController");
 const userRoute = require("./routes/userRoutes");
+const chatRoute = require("./routes/chatRoutes");
 const AppError = require("./utils/AppError");
 const cors = require("cors");
 
@@ -20,6 +21,7 @@ app.use(express.json());
 
 //Routes
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/chats", chatRoute);
 
 //Unhandled Routes
 app.all("*", (req, res, next) => {
