@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import ErrorPopup from "../Components/Error/Error";
 
 const ChatContext = createContext();
 
@@ -28,14 +29,6 @@ const ChatProvider = ({ children }) => {
           // console.log(response.data.data.user);
           setUser(response.data.data.user);
           setChat(response.data.data.chatData);
-
-          if (user) navigate("/chats");
-
-          setTimeout(() => {
-            if (!user) {
-              navigate("/");
-            }
-          }, 3000);
         } catch (error) {
           setError(error);
         }
@@ -48,6 +41,9 @@ const ChatProvider = ({ children }) => {
   return (
     <ChatContext.Provider value={{ user, chat, error, setError }}>
       {children}
+      {error && error.response.data.message === "jwt malformed" && (
+        <ErrorPopup message={"Please login to use the App"} />
+      )}
     </ChatContext.Provider>
   );
 };
