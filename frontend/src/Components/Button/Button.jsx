@@ -2,7 +2,6 @@ import styles from "./Button.module.css";
 export function Button({ activeButton, setActiveButton }) {
   function handleLogIn() {
     setActiveButton("login");
-    console.log("loggin in...");
   }
   function handleSignUp() {
     setActiveButton("signup");

@@ -21,7 +21,9 @@ input {
 }
 
 .submit {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-top: 15px;
   width: 100%;
   font-size: 15px;

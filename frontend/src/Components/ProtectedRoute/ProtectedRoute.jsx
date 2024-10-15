@@ -3,11 +3,9 @@ import { Navigate } from "react-router-dom";
 import { ChatContext } from "../../Context/ChatContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(ChatContext);
+  const { isAuth } = useContext(ChatContext);
 
-  if (!user) {
-    return <Navigate to="/" replace />;
-  }
+  if (!isAuth) return <Navigate to="/" replace />;
 
   return children;
 };

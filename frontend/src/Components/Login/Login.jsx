@@ -3,15 +3,18 @@ import styles from "./Login.module.css";
 import ErrorPopup from "../Error/Error";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../Spinner/Spinner";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     setError(null);
 
     try {
@@ -45,6 +48,8 @@ export function Login() {
         // Other errors (network, client-side, etc.)
         setError("Error: " + error.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,7 +73,7 @@ export function Login() {
           required
         />
         <button type="submit" className={styles.submit}>
-          Login
+          {isLoading ? <Spinner /> : "Login"}
         </button>
       </form>
       {error && <ErrorPopup message={error} />}
