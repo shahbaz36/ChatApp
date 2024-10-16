@@ -6,6 +6,12 @@ const { route } = require("./userRoutes");
 
 const router = express.Router();
 
-router.route("/").get(authController.protect, chatController.getUserChats);
+//To protect all the chat routes
+router.use(authController.protect);
+
+router
+  .route("/")
+  .get(chatController.getUserChats)
+  .post(chatController.accessChat);
 
 module.exports = router;

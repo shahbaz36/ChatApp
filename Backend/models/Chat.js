@@ -1,5 +1,4 @@
 const { default: mongoose } = require("mongoose");
-const User = require("./User");
 
 const chatSchema = new mongoose.Schema(
   {
@@ -8,16 +7,16 @@ const chatSchema = new mongoose.Schema(
     users: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: User,
+        ref: "User",
       },
     ],
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Message,
+      ref: "Message",
     },
     groupAdmin: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
     },
   },
   {

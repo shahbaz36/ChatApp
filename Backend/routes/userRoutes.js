@@ -4,7 +4,6 @@ const authController = require("../controllers/authController");
 
 const Router = express.Router();
 
-//TODO Add restriction to admin only for get request
 Router.route("/")
   .post(authController.signUp)
   .get(authController.protect, userController.getAllUsers);

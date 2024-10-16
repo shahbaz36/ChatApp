@@ -3,15 +3,27 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/AppError");
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  if (!users) {
-    return next(new AppError("0 users found", 500));
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const foundUsers = await User.find(keyword).find({
+    _id: { $ne: req.user._id },
+  });
+
+  if (!foundUsers) {
+    return next(new AppError("No users found", 500));
   }
 
   res.status(201).json({
-    status: "created",
+    status: "Success",
     data: {
-      users,
+      foundUsers,
     },
   });
 });
