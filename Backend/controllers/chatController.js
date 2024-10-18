@@ -5,13 +5,25 @@ const catchAsync = require("../utils/catchAsync");
 
 exports.getUserChats = catchAsync(async (req, res, next) => {
   const user = req.user;
-  const chatData = "Contains user chat data";
-  console.log("Backend Request");
+
+  const chatData = await Chat.find({
+    users: { $elemMatch: { $eq: user._id } },
+  })
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password")
+    .populate("latestMessage")
+    .sort({ updatedAt: -1 });
+
+  const result = await User.populate(chatData, {
+    path: "latestMessage.sender",
+    select: "name pic email",
+  });
+
   res.status(200).json({
     status: "success",
     data: {
       user,
-      chatData,
+      result,
     },
   });
 });
@@ -69,4 +81,48 @@ exports.accessChat = catchAsync(async (req, res, next) => {
 
     res.status(201).json({ status: "created", data: { fullChat } });
   }
+});
+
+exports.createGroupChat = catchAsync(async (req, res, next) => {
+  const chatName = req.body.name;
+  const users = JSON.parse(req.body.users);
+
+  if (!chatName || !users) {
+    return next(new AppError("All fields are required!", 401));
+  }
+
+  if (users.length < 2) {
+    return next(
+      new AppError("Atleast 2 users are required to create a group", 401)
+    );
+  }
+
+  users.push(req.user);
+
+  const groupChat = await Chat.create({
+    chatName: chatName,
+    users: users,
+    isGroupChat: true,
+    groupAdmin: req.user,
+  });
+
+  const fullChatData = await Chat.findOne({ id: groupChat._id })
+    .populate("users", "-passowrd")
+    .populate("groupAdmin", "-password");
+
+  if (!fullChatData) {
+    return next(
+      new AppError(
+        "There was an error while creating group chat. Please try again later",
+        404
+      )
+    );
+  }
+
+  res.status(201).json({
+    status: "created",
+    data: {
+      fullChatData,
+    },
+  });
 });

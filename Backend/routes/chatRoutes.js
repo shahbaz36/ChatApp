@@ -14,4 +14,5 @@ router
   .get(chatController.getUserChats)
   .post(chatController.accessChat);
 
+router.route("/groupChat");
 module.exports = router;
