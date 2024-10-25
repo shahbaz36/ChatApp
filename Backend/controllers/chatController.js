@@ -106,8 +106,8 @@ exports.createGroupChat = catchAsync(async (req, res, next) => {
     groupAdmin: req.user,
   });
 
-  const fullChatData = await Chat.findOne({ id: groupChat._id })
-    .populate("users", "-passowrd")
+  const fullChatData = await Chat.findOne({ _id: groupChat._id })
+    .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
   if (!fullChatData) {
@@ -124,5 +124,76 @@ exports.createGroupChat = catchAsync(async (req, res, next) => {
     data: {
       fullChatData,
     },
+  });
+});
+
+exports.renameGroup = catchAsync(async (req, res, next) => {
+  const { chatId, chatName } = req.body;
+
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      chatName: chatName,
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!updatedChat) {
+    return next(new AppError("Chat doesn't exist for the given ID", 404));
+  }
+
+  res.status(200).json({
+    status: "Success",
+    data: updatedChat,
+  });
+});
+
+exports.addToGroup = catchAsync(async (req, res, next) => {
+  const { chatId, newMemeber } = req.body;
+
+  const addedNewMember = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $push: { users: newMemeber },
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!addedNewMember) {
+    return next(new AppError("Chat doesn't exist for the given ID", 404));
+  }
+
+  res.status(200).json({
+    status: "Success",
+    data: addedNewMember,
+  });
+});
+
+exports.removeFromGroup = catchAsync(async (req, res, next) => {
+  const { chatId, memberId } = req.body;
+
+  const removedMember = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $pull: { users: memberId },
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!removedMember) {
+    return next(
+      new AppError("Problem while deleting member. Chat not found", 404)
+    );
+  }
+
+  res.status(200).json({
+    status: "Success",
+    data: removedMember,
   });
 });
