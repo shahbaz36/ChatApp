@@ -40,7 +40,7 @@ const ChatProvider = ({ children }) => {
           }
           // console.log(response.data.data.user);
           setUser(response.data.data.user);
-          setChat(response.data.data.chatData);
+          setChat(response.data.data.result);
         } catch (error) {
           setError(error);
         } finally {
