@@ -32,7 +32,7 @@ exports.accessChat = catchAsync(async (req, res, next) => {
   const { userId } = req.body;
 
   if (!userId) {
-    next(
+    return next(
       new AppError(
         "Missing user id. Please send the user id to start a Conversation",
         404
@@ -70,16 +70,16 @@ exports.accessChat = catchAsync(async (req, res, next) => {
     };
 
     const createdChat = await Chat.create(chatData);
-    const fullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+    const chat = await Chat.findOne({ _id: createdChat._id }).populate(
       "users",
       "-password"
     );
 
-    if (!fullChat) {
+    if (!chat) {
       return next(new AppError("Problem while creating new Chat", 400));
     }
 
-    res.status(201).json({ status: "created", data: { fullChat } });
+    res.status(201).json({ status: "created", data: { chat } });
   }
 });
 

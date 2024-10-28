@@ -16,6 +16,10 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     _id: { $ne: req.user._id },
   });
 
+  if (req.query.search === "") {
+    foundUsers = null;
+  }
+
   if (!foundUsers) {
     return next(new AppError("No users found", 500));
   }
