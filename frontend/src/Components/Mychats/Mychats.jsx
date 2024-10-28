@@ -5,7 +5,7 @@ import { ChatContext } from "../../Context/ChatContext";
 
 function Mychats() {
   const { chat } = useContext(ChatContext);
-  console.log(chat);
+
   return (
     <div className={styles.myChats}>
       <div className={styles.myNav}>

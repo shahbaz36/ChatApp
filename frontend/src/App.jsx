@@ -20,6 +20,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/chats/:id"
+            element={
+              <ProtectedRoute>
+                <Chatpage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </ChatProvider>
     </CookiesProvider>

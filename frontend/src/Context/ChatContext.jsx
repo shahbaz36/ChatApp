@@ -54,7 +54,14 @@ const ChatProvider = ({ children }) => {
 
   return (
     <ChatContext.Provider
-      value={{ user, chat, error, setError, isLoading, isAuth }}
+      value={{
+        user,
+        chat,
+        error,
+        setError,
+        isLoading,
+        isAuth,
+      }}
     >
       {children}
       {error === "Unauthorized" && (
