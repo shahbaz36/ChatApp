@@ -8,7 +8,7 @@ const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
   const [user, setUser] = useState();
-  const [chat, setChat] = useState();
+  const [chats, setChats] = useState();
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
@@ -40,7 +40,7 @@ const ChatProvider = ({ children }) => {
           }
           // console.log(response.data.data.user);
           setUser(response.data.data.user);
-          setChat(response.data.data.result);
+          setChats(response.data.data.result);
         } catch (error) {
           setError(error);
         } finally {
@@ -56,7 +56,7 @@ const ChatProvider = ({ children }) => {
     <ChatContext.Provider
       value={{
         user,
-        chat,
+        chats,
         error,
         setError,
         isLoading,

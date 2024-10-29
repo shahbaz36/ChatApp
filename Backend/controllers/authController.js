@@ -91,6 +91,7 @@ exports.protect = catchAsync(async function (req, res, next) {
   }
 
   req.user = foundUser;
+
   next();
 });
 
