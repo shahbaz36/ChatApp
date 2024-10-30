@@ -1,6 +1,6 @@
 .myChats {
   margin: 12px 8px;
-  width: 50%;
+  width: 40%;
   background-color: white;
   border-radius: 5px;
 }
@@ -53,6 +53,7 @@
   display: flex;
   text-decoration: none;
   align-items: center;
+  color: black;
   margin: 10px;
   padding: 5px;
   border-radius: 10px;
@@ -83,5 +84,6 @@
 }
 
 .active {
-  background-color: #5eb1bf;
+  background-color: #c96342;
+  color: white;
 }

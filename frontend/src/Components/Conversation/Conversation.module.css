@@ -1,10 +1,71 @@
-.conv {
+.landing {
   margin: 12px 8px;
   border-radius: 5px;
-  width: 100%;
+  width: 95%;
   background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 22px;
+}
+
+.conv {
+  margin: 12px 8px;
+  border-radius: 5px;
+  width: 95%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: 22px;
+}
+.myNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 5px 5px 10px;
+}
+
+.myNav h2 {
+  font-size: 30px;
+  font-weight: 500;
+  margin-left: 10px;
+}
+
+.myNav button {
+  margin-right: 10px;
+  border: none;
+  background-color: #eceadf;
+  padding: 2px 4px 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.chat {
+  flex: 1;
+  position: relative;
+  margin: 15px;
+  background-color: #f2f1e9;
+  border-radius: 10px;
+}
+
+.inputWrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.inputWrapper input {
+  margin: 10px 10px 10px 10px;
+  width: 100%;
+  border: none;
+  background-color: white;
+  padding: 8px 8px 8px 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  outline: none;
 }
