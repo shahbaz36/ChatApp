@@ -47,5 +47,5 @@ export const useSearchUser = (searchData) => {
     [searchData, cookies.jwt]
   );
 
-  return [isLoading, error, userData];
+  return [isLoading, error, userData, setError];
 };

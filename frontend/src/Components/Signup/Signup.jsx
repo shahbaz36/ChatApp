@@ -57,9 +57,18 @@ export function SignUp() {
             }
           );
           const response = await result.json();
+
+          if (response.error && response.error.message) {
+            const regex = /(\bFile size too large\b)/g;
+            if (regex.test(response.error.message)) {
+              throw new Error("File size too large upload smaller photo");
+            }
+          }
+
           if (!response.url) {
             throw new Error("Image upload failed");
           }
+
           const url = response.url.toString();
           setPicUrl(url);
         } else {

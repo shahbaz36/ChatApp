@@ -12,7 +12,13 @@ function Conversation() {
   const { id } = useParams();
   const [isAccessingChat, selectedChat, error] = useAccessChat(id);
 
-  console.log(selectedChat);
+  if (!id) {
+    return (
+      <div className={styles.landing}>
+        Click on a User to start Conversation
+      </div>
+    );
+  }
 
   return isAccessingChat === true ? (
     <div className={styles.landing}>Click on a User to start Conversation</div>
