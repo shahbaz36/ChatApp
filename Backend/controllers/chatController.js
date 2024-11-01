@@ -28,6 +28,25 @@ exports.getUserChats = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.checkForGroupChat = catchAsync(async (req, res, next) => {
+  // Check if the users want to access group chat
+  const { userId } = req.body;
+  const groupChat = await Chat.findById(userId)
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (groupChat?.isGroupChat) {
+    return res.status(200).json({
+      status: "Success",
+      data: {
+        chat: groupChat,
+      },
+    });
+  }
+
+  next();
+});
+
 exports.accessChat = catchAsync(async (req, res, next) => {
   const { userId } = req.body;
 
@@ -70,16 +89,16 @@ exports.accessChat = catchAsync(async (req, res, next) => {
     };
 
     const createdChat = await Chat.create(chatData);
-    const chat = await Chat.findOne({ _id: createdChat._id }).populate(
+    const newChat = await Chat.findOne({ _id: createdChat._id }).populate(
       "users",
       "-password"
     );
 
-    if (!chat) {
+    if (!newChat) {
       return next(new AppError("Problem while creating new Chat", 400));
     }
 
-    res.status(201).json({ status: "created", data: { chat } });
+    res.status(201).json({ status: "created", data: { chat: newChat } });
   }
 });
 

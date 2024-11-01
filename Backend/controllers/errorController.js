@@ -38,6 +38,8 @@ const sendProdError = function (err, res) {
 
 const sendDevError = function (err, res) {
   err.statusCode = err.statusCode || 500;
+
+  console.log(err);
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,

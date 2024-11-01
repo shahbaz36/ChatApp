@@ -12,7 +12,7 @@ router.use(authController.protect);
 router
   .route("/")
   .get(chatController.getUserChats)
-  .post(chatController.accessChat);
+  .post(chatController.checkForGroupChat, chatController.accessChat);
 
 router.route("/groupChat").post(chatController.createGroupChat);
 router.route("/rename").put(chatController.renameGroup);
