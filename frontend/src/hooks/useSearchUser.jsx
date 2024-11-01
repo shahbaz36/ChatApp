@@ -13,6 +13,7 @@ export const useSearchUser = (searchData) => {
       async function fetchSearchUserData() {
         try {
           setIsLoading(true);
+
           setUserData([]);
           const token = cookies.jwt;
 
@@ -47,5 +48,5 @@ export const useSearchUser = (searchData) => {
     [searchData, cookies.jwt]
   );
 
-  return [isLoading, error, userData, setError];
+  return { isLoading, error, userData, setError };
 };

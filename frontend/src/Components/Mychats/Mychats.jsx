@@ -6,12 +6,17 @@ import { useParams } from "react-router-dom";
 
 import SingleChat from "../SingleChat/SingleChat";
 import CreateGroup from "../CreateGroup/CreateGroup";
+import SingleGroupChat from "../SingleGroupChat/SingleGroupChat";
 
 function Mychats() {
   const { chats, isLoading } = useContext(ChatContext);
   const { id } = useParams();
 
   const [isVisible, setIsVisible] = useState(false);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className={styles.myChats}>
@@ -22,15 +27,21 @@ function Mychats() {
         </button>
       </div>
       <div className={styles.chatContainer}>
-        {isLoading
-          ? "Please wait while loading your chats"
-          : chats.map((chat) => (
-              <SingleChat
-                chat={chat}
-                isActive={id === chat.users[1]._id}
-                key={chat._id}
-              />
-            ))}
+        {chats.map((chat) =>
+          chat.isGroupChat ? (
+            <SingleGroupChat
+              chat={chat}
+              isActive={id === chat._id}
+              key={chat._id}
+            />
+          ) : (
+            <SingleChat
+              chat={chat}
+              isActive={id === chat.users[1]?._id}
+              key={chat._id}
+            />
+          )
+        )}
       </div>
       {isVisible && <CreateGroup setIsVisible={setIsVisible} />}
     </div>

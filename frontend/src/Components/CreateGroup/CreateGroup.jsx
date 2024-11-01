@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from "./CreateGroup.module.css";
 import { useSearchUser } from "../../hooks/useSearchUser";
 import { X } from "lucide-react";
+import { useCookies } from "react-cookie";
+import ErrorPopup from "../Error/Error";
+import axios from "axios";
+import { ChatContext } from "../../Context/ChatContext";
+import Spinner from "../Spinner/Spinner";
 
 function CreateGroup({ setIsVisible }) {
   const [chatName, setChatName] = useState("");
   const [search, setSearch] = useState("");
-  const [isLoading, error, userData] = useSearchUser(search);
+  const { isLoading, error, userData } = useSearchUser(search);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const { user } = useContext(ChatContext);
+
+  const [cookies] = useCookies(["jwt"]);
 
   const handleSearchUser = (e) => {
     setSearch(e.target.value);
@@ -30,7 +38,51 @@ function CreateGroup({ setIsVisible }) {
     }
   };
 
-  function handleCreateGroup() {}
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [createGroupError, setCreateGroupError] = useState(null);
+
+  async function handleCreateGroup() {
+    try {
+      setIsCreatingGroup(true);
+      setCreateGroupError(null);
+
+      if (selectedUsers.length <= 1) {
+        throw new Error("Please select atleast 2 users to create a group");
+      }
+
+      const token = cookies.jwt;
+
+      if (!token) throw new Error("Unauthorized");
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.post(
+        "/api/v1/chats/groupChat",
+        {
+          name: chatName,
+          users: JSON.stringify([...selectedUsers, user]),
+        },
+        config
+      );
+
+      if (!response) {
+        throw new Error("Error while creating group chat");
+      }
+
+      if (response.status === 201) {
+        setIsVisible(false);
+      }
+    } catch (error) {
+      setCreateGroupError(error.message);
+    } finally {
+      setIsCreatingGroup(false);
+    }
+  }
 
   return (
     <>
@@ -77,10 +129,11 @@ function CreateGroup({ setIsVisible }) {
             </div>
           )}
           <button className={styles.createBtn} onClick={handleCreateGroup}>
-            Create Chat
+            {isCreatingGroup ? <Spinner /> : "Create Chat"}
           </button>
         </div>
       </div>
+      {createGroupError && <ErrorPopup message={createGroupError} />}
     </>
   );
 }

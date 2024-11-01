@@ -9,7 +9,7 @@ const ChatContext = createContext();
 const ChatProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [chats, setChats] = useState();
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const navigate = useNavigate();
@@ -19,9 +19,9 @@ const ChatProvider = ({ children }) => {
   useEffect(
     function () {
       async function getUserAndChatData() {
+        setError(null);
         try {
           setIsLoading(true);
-
           const token = cookies.jwt;
 
           if (!token) throw new Error("Unauthorized");
@@ -38,11 +38,11 @@ const ChatProvider = ({ children }) => {
           if (response.status === 200) {
             setIsAuth(true);
           }
-          // console.log(response.data.data.user);
+
           setUser(response.data.data.user);
           setChats(response.data.data.result);
         } catch (error) {
-          setError(error);
+          setError(error.message);
         } finally {
           setIsLoading(false);
         }

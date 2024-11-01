@@ -13,7 +13,7 @@ function Navbar() {
   const { user } = useContext(ChatContext);
   const [drawer, setDrawer] = useState(false);
   const [searchData, setSearchData] = useState("");
-  const [isLoading, error, userData] = useSearchUser(searchData);
+  const { isLoading, error, userData } = useSearchUser(searchData);
 
   const [showProfile, setShowProfile] = useState(false);
 

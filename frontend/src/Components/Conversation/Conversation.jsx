@@ -11,6 +11,7 @@ import { ChatContext } from "../../Context/ChatContext";
 function Conversation() {
   const { id } = useParams();
   const [isAccessingChat, selectedChat, error] = useAccessChat(id);
+  const { user } = useContext(ChatContext);
 
   if (!id) {
     return (
@@ -21,10 +22,10 @@ function Conversation() {
   }
 
   return isAccessingChat === true ? (
-    <div className={styles.landing}>Click on a User to start Conversation</div>
+    <div className={styles.landing}>Wait while loading your conversation</div>
   ) : (
     <>
-      {selectedChat && <SelectedChat selectedChat={selectedChat} />}
+      {selectedChat && <SelectedChat selectedChat={selectedChat} user={user} />}
       {error && (
         <ErrorPopup message={"Please select a user to start conversation"} />
       )}
@@ -32,9 +33,7 @@ function Conversation() {
   );
 }
 
-function SelectedChat({ selectedChat }) {
-  const { user } = useContext(ChatContext);
-
+function SelectedChat({ selectedChat, user }) {
   const getSender = (users) => {
     return user._id === users[0]._id ? users[1] : users[0];
   };
@@ -45,7 +44,7 @@ function SelectedChat({ selectedChat }) {
         <h2>
           {selectedChat.isGroupChat
             ? selectedChat.chatName
-            : getSender(selectedChat.users).name}
+            : getSender(selectedChat.users)?.name}
         </h2>
         <button>
           <Eye size={25} />

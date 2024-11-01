@@ -1,24 +1,22 @@
 import { NavLink } from "react-router-dom";
-import styles from "./SingleChat.module.css";
+import styles from "./SingleGroupChat.module.css";
 
-function SingleChat({ chat, isActive }) {
+function SingleGroupChat({ chat, isActive }) {
   return (
     <NavLink
       className={`${styles.chat}  ${isActive ? styles.active : ""}`}
-      to={`/chats/${chat.users[1]?._id}`}
+      to={`/chats/${chat._id}`}
       key={chat._id}
     >
       {chat.latestMessage ? (
         <>
-          <img src={chat.users[1].pic} alt="" />
-          <h3>{chat.users[1].name} </h3>
+          <h3>{chat.chatName} </h3>
           <p className={styles.author}>{chat.latestMessage}</p> <p>Message</p>
         </>
       ) : (
         <>
-          <img src={chat.users[1]?.pic} alt="" />
           <div>
-            <h3>{chat.users[1]?.name} </h3>
+            <h3>{chat.chatName} </h3>
             <p className={styles.author}>Author :</p> <p>Message</p>
           </div>
         </>
@@ -26,4 +24,5 @@ function SingleChat({ chat, isActive }) {
     </NavLink>
   );
 }
-export default SingleChat;
+
+export default SingleGroupChat;
