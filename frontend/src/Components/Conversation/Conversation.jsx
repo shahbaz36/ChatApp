@@ -4,9 +4,11 @@ import { useAccessChat } from "../../hooks/useChat";
 import { useParams } from "react-router-dom";
 import ErrorPopup from "../Error/Error";
 import { Eye } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { ChatContext } from "../../Context/ChatContext";
+import Profile from "../Profile/Profile";
+import GroupChatProfile from "../GroupChatProfile/GroupChatProfile";
 
 function Conversation() {
   const { id } = useParams();
@@ -34,6 +36,8 @@ function Conversation() {
 }
 
 function SelectedChat({ selectedChat, user }) {
+  const [isVisible, setIsVisible] = useState(false);
+
   const getSender = (users) => {
     return user._id === users[0]._id ? users[1] : users[0];
   };
@@ -46,9 +50,21 @@ function SelectedChat({ selectedChat, user }) {
             ? selectedChat.chatName
             : getSender(selectedChat.users)?.name}
         </h2>
-        <button>
+        <button onClick={setIsVisible}>
           <Eye size={25} />
         </button>
+        {isVisible &&
+          (selectedChat.isGroupChat ? (
+            <GroupChatProfile
+              groupChat={selectedChat}
+              setShowProfile={setIsVisible}
+            />
+          ) : (
+            <Profile
+              user={getSender(selectedChat.users)}
+              setShowProfile={setIsVisible}
+            />
+          ))}
       </div>
       <div className={styles.chat}>
         <div className={styles.inputWrapper}>

@@ -12,7 +12,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
       }
     : {};
 
-  const foundUsers = await User.find(keyword).find({
+  var foundUsers = await User.find(keyword).find({
     _id: { $ne: req.user._id },
   });
 

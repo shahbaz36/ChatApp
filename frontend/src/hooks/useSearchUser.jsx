@@ -10,6 +10,7 @@ export const useSearchUser = (searchData) => {
   const [cookies] = useCookies(["jwt"]);
   useEffect(
     function () {
+      if (searchData === "") return;
       async function fetchSearchUserData() {
         try {
           setIsLoading(true);
