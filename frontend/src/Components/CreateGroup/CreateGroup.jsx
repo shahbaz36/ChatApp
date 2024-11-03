@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { useCookies } from "react-cookie";
 import ErrorPopup from "../Error/Error";
 import axios from "axios";
-import { ChatContext } from "../../Context/ChatContext";
 import Spinner from "../Spinner/Spinner";
 
 function CreateGroup({ setIsVisible }) {
@@ -13,7 +12,6 @@ function CreateGroup({ setIsVisible }) {
   const [search, setSearch] = useState("");
   const { isLoading, error, userData } = useSearchUser(search);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const { user } = useContext(ChatContext);
 
   const [cookies] = useCookies(["jwt"]);
 
@@ -65,7 +63,7 @@ function CreateGroup({ setIsVisible }) {
         "/api/v1/chats/groupChat",
         {
           name: chatName,
-          users: JSON.stringify([...selectedUsers, user]),
+          users: JSON.stringify(selectedUsers),
         },
         config
       );

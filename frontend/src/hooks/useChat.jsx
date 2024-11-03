@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 export const useAccessChat = (id) => {
   const [isAccessingChat, setIsAcessingChat] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
 
   const [cookies] = useCookies(["jwt"]);
 
@@ -14,7 +14,7 @@ export const useAccessChat = (id) => {
       const fetchAccessChat = async () => {
         try {
           setIsAcessingChat(true);
-          setError();
+          setError(null);
 
           const token = cookies.jwt;
 
@@ -36,6 +36,7 @@ export const useAccessChat = (id) => {
           setSelectedChat(response.data.data.chat);
         } catch (error) {
           setError(error.message);
+          // console.log(error);
         } finally {
           setIsAcessingChat(false);
         }
@@ -45,5 +46,5 @@ export const useAccessChat = (id) => {
     [id, cookies.jwt]
   );
 
-  return [isAccessingChat, selectedChat, error];
+  return [isAccessingChat, selectedChat, setSelectedChat, error];
 };

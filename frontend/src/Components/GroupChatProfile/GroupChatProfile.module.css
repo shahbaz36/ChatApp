@@ -53,6 +53,7 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .user {
@@ -73,6 +74,13 @@
   flex-direction: column;
 }
 
+.body p {
+  font-size: large;
+  font-weight: 600;
+  margin-left: 3px;
+  margin-bottom: 5px;
+}
+
 .chatName {
   display: flex;
   flex-direction: row;
@@ -85,7 +93,6 @@
   border-color: #209acb1c;
   box-shadow: none;
   border-width: 1px;
-
   width: 100%;
   padding: 8px 8px 8px 12px;
   font-weight: 600;
@@ -94,12 +101,27 @@
 }
 
 .btn {
+  background-color: #207fde;
   border: none;
   display: flex;
   align-items: center;
   justify-content: space-around;
   width: fit-content;
   height: 30px;
-  border-radius: 50%;
+  border-radius: 5px;
+  color: white;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
+.leaveBtn {
+  background-color: rgb(208, 75, 75);
+  float: right;
+  color: white;
+  width: fit-content;
+  border: none;
+  margin-top: 5px;
+  padding: 6px;
+  border-radius: 5px;
   cursor: pointer;
 }

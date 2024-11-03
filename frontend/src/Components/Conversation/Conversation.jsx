@@ -12,7 +12,8 @@ import GroupChatProfile from "../GroupChatProfile/GroupChatProfile";
 
 function Conversation() {
   const { id } = useParams();
-  const [isAccessingChat, selectedChat, error] = useAccessChat(id);
+  const [isAccessingChat, selectedChat, setSelectedChat, error] =
+    useAccessChat(id);
   const { user } = useContext(ChatContext);
 
   if (!id) {
@@ -27,7 +28,13 @@ function Conversation() {
     <div className={styles.landing}>Wait while loading your conversation</div>
   ) : (
     <>
-      {selectedChat && <SelectedChat selectedChat={selectedChat} user={user} />}
+      {selectedChat && (
+        <SelectedChat
+          selectedChat={selectedChat}
+          setSelectedChat={setSelectedChat}
+          user={user}
+        />
+      )}
       {error && (
         <ErrorPopup message={"Please select a user to start conversation"} />
       )}
@@ -35,7 +42,7 @@ function Conversation() {
   );
 }
 
-function SelectedChat({ selectedChat, user }) {
+function SelectedChat({ selectedChat, user, setSelectedChat }) {
   const [isVisible, setIsVisible] = useState(false);
 
   const getSender = (users) => {
@@ -50,7 +57,7 @@ function SelectedChat({ selectedChat, user }) {
             ? selectedChat.chatName
             : getSender(selectedChat.users)?.name}
         </h2>
-        <button onClick={setIsVisible}>
+        <button onClick={setIsVisible} className={styles.navBtn}>
           <Eye size={25} />
         </button>
         {isVisible &&
@@ -58,6 +65,7 @@ function SelectedChat({ selectedChat, user }) {
             <GroupChatProfile
               groupChat={selectedChat}
               setShowProfile={setIsVisible}
+              setSelectedChat={setSelectedChat}
             />
           ) : (
             <Profile
