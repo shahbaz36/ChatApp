@@ -114,6 +114,11 @@
   cursor: pointer;
 }
 
+.addUsers {
+  display: flex;
+  align-items: center;
+}
+
 .leaveBtn {
   background-color: rgb(208, 75, 75);
   float: right;
@@ -124,4 +129,38 @@
   padding: 6px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.addUserList {
+  display: flex;
+  flex-direction: column;
+}
+.addUser {
+  display: flex;
+  margin-bottom: 10px;
+  text-decoration: none;
+  align-items: center;
+  background-color: #e8e8e8;
+  padding: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.userDetails p {
+  margin-bottom: 2px;
+  font-weight: 550;
+  font-size: 15px;
+  /* color: black; */
+}
+
+.addUser img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.active {
+  background-color: #197278;
+  color: white;
 }

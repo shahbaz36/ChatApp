@@ -5,14 +5,44 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import Spinner from "../Spinner/Spinner";
 import ErrorPopup from "../Error/Error";
+import { useSearchUser } from "../../hooks/useSearchUser";
 
 function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
   const [chatName, setChatName] = useState(null);
   const [isRenameLoading, setIsRenameLoading] = useState(false);
   const [renameError, setRenameError] = useState(null);
+  const [searchData, setSearchData] = useState("");
+  const { userData } = useSearchUser(searchData);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userAlreadyExist, setUserAlreadyExist] = useState(null);
+  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [addMemberError, setAddMemberError] = useState(null);
 
   const [cookies] = useCookies("jwt");
 
+  const handleSearchUser = (e) => {
+    setSearchData(e.target.value);
+    console.log(userData);
+  };
+
+  const handleSelectedUser = (user) => {
+    let isUserAlreadyAdded = false;
+
+    groupChat.users.forEach((addedMember) => {
+      if (addedMember.email === user.email) {
+        isUserAlreadyAdded = true;
+      }
+    });
+    if (!isUserAlreadyAdded) {
+      setSelectedUser(user);
+
+      setUserAlreadyExist(null);
+    } else {
+      setUserAlreadyExist(
+        "User already in the group, can't add same user twice"
+      );
+    }
+  };
   function handleChatName(e) {
     setChatName(e.target.value);
   }
@@ -60,6 +90,51 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
     }
   }
 
+  async function handleAddNewMember() {
+    try {
+      setIsAddingMember(true);
+      setAddMemberError(null);
+
+      const token = cookies.jwt;
+
+      if (!token) {
+        throw new Error("Unauthorized");
+      }
+
+      if (!selectedUser) {
+        throw new Error("Please select a user to add to the group");
+      }
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.put(
+        "http://localhost:3030/api/v1/chats/groupAdd",
+        {
+          chatId: groupChat._id,
+          newMember: selectedUser._id,
+        },
+        config
+      );
+      console.log(response);
+
+      if (response?.status !== 200) {
+        throw new Error("Problem while adding member to group chat");
+      }
+
+      setSelectedChat(response.data.data);
+      setShowProfile(false);
+    } catch (error) {
+      setAddMemberError(error.message);
+    } finally {
+      setIsAddingMember(false);
+    }
+  }
+
   return (
     <>
       <div className={styles.protectOverlay}></div>
@@ -93,18 +168,44 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
                   {isRenameLoading ? <Spinner /> : "Update"}
                 </button>
               </div>
-
-              <input
-                type="text"
-                placeholder="Add user to group"
-                className={styles.inpt}
-              />
+              <div className={styles.addUsers}>
+                <input
+                  type="text"
+                  placeholder="Add user to group"
+                  className={styles.inpt}
+                  onChange={handleSearchUser}
+                />
+                <button className={styles.btn} onClick={handleAddNewMember}>
+                  Add
+                </button>
+              </div>
+              <div className={styles.addUserList}>
+                {" "}
+                {userData.map((user) => {
+                  return (
+                    <div
+                      className={`${styles.addUser} ${
+                        selectedUser?.email === user.email ? styles.active : ""
+                      }`}
+                      key={user._id}
+                      onClick={() => handleSelectedUser(user)}
+                    >
+                      <img src={user.pic} alt="" />
+                      <div className={styles.userDetails}>
+                        <p>{user.name}</p>
+                        <p>{user.email}</p>
+                      </div>
+                    </div>
+                  );
+                })}{" "}
+              </div>
             </div>
           </div>
         )}
         <button className={styles.leaveBtn}>Leave Group </button>
       </div>
       {renameError && <ErrorPopup message={renameError} />}
+      {userAlreadyExist && <ErrorPopup message={userAlreadyExist} />}
     </>
   );
 }

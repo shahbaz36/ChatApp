@@ -10,7 +10,7 @@ import Spinner from "../Spinner/Spinner";
 function CreateGroup({ setIsVisible }) {
   const [chatName, setChatName] = useState("");
   const [search, setSearch] = useState("");
-  const { isLoading, error, userData } = useSearchUser(search);
+  const { userData } = useSearchUser(search);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const [cookies] = useCookies(["jwt"]);

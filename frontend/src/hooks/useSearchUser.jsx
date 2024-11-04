@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 
 export const useSearchUser = (searchData) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearchingUser, setIsSearchingUser] = useState(false);
   const [error, setError] = useState();
   const [userData, setUserData] = useState([]);
 
@@ -13,7 +13,7 @@ export const useSearchUser = (searchData) => {
       if (searchData === "") return;
       async function fetchSearchUserData() {
         try {
-          setIsLoading(true);
+          setIsSearchingUser(true);
 
           setUserData([]);
           const token = cookies.jwt;
@@ -35,12 +35,11 @@ export const useSearchUser = (searchData) => {
           }
 
           setUserData(response.data.data.foundUsers);
-          console.log(userData);
         } catch (error) {
           if (error.message === "No users found!") setError(error.message);
           setUserData([]);
         } finally {
-          setIsLoading(false);
+          setIsSearchingUser(false);
           setError("");
         }
       }
@@ -49,5 +48,5 @@ export const useSearchUser = (searchData) => {
     [searchData, cookies.jwt]
   );
 
-  return { isLoading, error, userData, setError };
+  return { isSearchingUser, error, userData, setError };
 };

@@ -7,7 +7,7 @@ import Sidedrawer from "../Sidedrawer/Sidedrawer";
 import { useSearchUser } from "../../hooks/useSearchUser";
 import { useContext, useState } from "react";
 import { ChatContext } from "../../Context/ChatContext";
-import { X } from "lucide-react";
+
 import Profile from "../Profile/Profile";
 
 function Navbar() {

@@ -170,12 +170,12 @@ exports.renameGroup = catchAsync(async (req, res, next) => {
 });
 
 exports.addToGroup = catchAsync(async (req, res, next) => {
-  const { chatId, newMemeber } = req.body;
+  const { chatId, newMember } = req.body;
 
   const addedNewMember = await Chat.findByIdAndUpdate(
     chatId,
     {
-      $push: { users: newMemeber },
+      $push: { users: newMember },
     },
     { new: true }
   )
