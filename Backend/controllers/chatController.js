@@ -195,7 +195,7 @@ exports.addToGroup = catchAsync(async (req, res, next) => {
 exports.removeFromGroup = catchAsync(async (req, res, next) => {
   const { chatId, memberId } = req.body;
 
-  const removedMember = await Chat.findByIdAndUpdate(
+  const UpdatedGroup = await Chat.findByIdAndUpdate(
     chatId,
     {
       $pull: { users: memberId },
@@ -205,7 +205,7 @@ exports.removeFromGroup = catchAsync(async (req, res, next) => {
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
-  if (!removedMember) {
+  if (!UpdatedGroup) {
     return next(
       new AppError("Problem while deleting member. Chat not found", 404)
     );
@@ -213,6 +213,6 @@ exports.removeFromGroup = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "Success",
-    data: removedMember,
+    data: UpdatedGroup,
   });
 });

@@ -7,6 +7,8 @@ import Spinner from "../Spinner/Spinner";
 import ErrorPopup from "../Error/Error";
 import { useSearchUser } from "../../hooks/useSearchUser";
 
+import LeaveModal from "../LeaveModal/LeaveModal";
+
 function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
   const [chatName, setChatName] = useState(null);
   const [isRenameLoading, setIsRenameLoading] = useState(false);
@@ -17,6 +19,13 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
   const [userAlreadyExist, setUserAlreadyExist] = useState(null);
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [addMemberError, setAddMemberError] = useState(null);
+
+  const [showModal, setShowModal] = useState(false);
+
+  function handleLeaveButtonClick() {
+    setShowModal(true);
+    // setShowProfile(false);
+  }
 
   const [cookies] = useCookies("jwt");
 
@@ -43,9 +52,11 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
       );
     }
   };
+
   function handleChatName(e) {
     setChatName(e.target.value);
   }
+
   async function changeChatName() {
     try {
       setIsRenameLoading(true);
@@ -57,7 +68,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
         throw new Error("Unauthorized");
       }
 
-      if (chatName.length <= 3) {
+      if (chatName?.length <= 3) {
         throw new Error("A group name must be longer than 3 characters");
       }
 
@@ -132,6 +143,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
       setAddMemberError(error.message);
     } finally {
       setIsAddingMember(false);
+      setSelectedUser(null);
     }
   }
 
@@ -176,7 +188,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
                   onChange={handleSearchUser}
                 />
                 <button className={styles.btn} onClick={handleAddNewMember}>
-                  Add
+                  {isAddingMember ? <Spinner /> : "Add"}
                 </button>
               </div>
               <div className={styles.addUserList}>
@@ -202,10 +214,22 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
             </div>
           </div>
         )}
-        <button className={styles.leaveBtn}>Leave Group </button>
+        <button className={styles.leaveBtn} onClick={handleLeaveButtonClick}>
+          Leave Group{" "}
+        </button>{" "}
+        {showModal && (
+          <LeaveModal
+            setShowModal={setShowModal}
+            message="Are you sure you want to leave the group ?"
+            chatId={groupChat._id}
+            setSelectedChat={setSelectedChat}
+          />
+        )}
       </div>
+
       {renameError && <ErrorPopup message={renameError} />}
       {userAlreadyExist && <ErrorPopup message={userAlreadyExist} />}
+      {addMemberError && <ErrorPopup message={addMemberError} />}
     </>
   );
 }
