@@ -15,8 +15,8 @@ router
   .post(chatController.checkForGroupChat, chatController.accessChat);
 
 router.route("/groupChat").post(chatController.createGroupChat);
-router.route("/rename").put(chatController.renameGroup);
-router.route("/groupAdd").put(chatController.addToGroup);
-router.route("/groupRemove").put(chatController.removeFromGroup);
+router.route("/rename").patch(chatController.renameGroup);
+router.route("/groupAdd").patch(chatController.addToGroup);
+router.route("/groupRemove").patch(chatController.removeFromGroup);
 
 module.exports = router;

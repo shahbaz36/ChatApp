@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import styles from "./GroupChatProfile.module.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import Spinner from "../Spinner/Spinner";
@@ -8,6 +8,7 @@ import ErrorPopup from "../Error/Error";
 import { useSearchUser } from "../../hooks/useSearchUser";
 
 import LeaveModal from "../LeaveModal/LeaveModal";
+import { ChatContext } from "../../Context/ChatContext";
 
 //TODO : Remove users from group
 function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
@@ -22,6 +23,8 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
   const [addMemberError, setAddMemberError] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
+
+  const { setRefresh } = useContext(ChatContext);
 
   function handleLeaveButtonClick() {
     setShowModal(true);
@@ -80,7 +83,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
         },
       };
 
-      const response = await axios.put(
+      const response = await axios.patch(
         "http://localhost:3030/api/v1/chats/rename",
         {
           chatId: groupChat._id,
@@ -95,6 +98,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
 
       setSelectedChat(response.data.updatedChat);
       setShowProfile(false);
+      setRefresh(true);
     } catch (error) {
       setRenameError(error.message);
     } finally {
@@ -124,7 +128,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
         },
       };
 
-      const response = await axios.put(
+      const response = await axios.patch(
         "http://localhost:3030/api/v1/chats/groupAdd",
         {
           chatId: groupChat._id,
@@ -133,6 +137,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
         config
       );
 
+      setRefresh(true);
       if (response?.status !== 200) {
         throw new Error("Problem while adding member to group chat");
       }

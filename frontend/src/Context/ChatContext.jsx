@@ -12,6 +12,7 @@ const ChatProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
 
   const [cookies] = useCookies(["jwt"]);
@@ -41,6 +42,7 @@ const ChatProvider = ({ children }) => {
 
           setUser(response.data.data.user);
           setChats(response.data.data.result);
+          setRefresh(false);
         } catch (error) {
           setError(error.message);
         } finally {
@@ -49,7 +51,7 @@ const ChatProvider = ({ children }) => {
       }
       getUserAndChatData();
     },
-    [navigate, cookies.jwt, isAuth]
+    [navigate, cookies.jwt, isAuth, refresh]
   );
 
   return (
@@ -61,6 +63,7 @@ const ChatProvider = ({ children }) => {
         setError,
         isLoading,
         isAuth,
+        setRefresh,
       }}
     >
       {children}

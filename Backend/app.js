@@ -1,8 +1,9 @@
 const express = require("express");
 
 const GEH = require("./controllers/errorController");
-const userRoute = require("./routes/userRoutes");
-const chatRoute = require("./routes/chatRoutes");
+const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 const AppError = require("./utils/AppError");
 const cors = require("cors");
 
@@ -20,8 +21,9 @@ app.use(cors());
 app.use(express.json());
 
 //Routes
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/chats", chatRoute);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/chats", chatRoutes);
+app.use("/api/v1/messages", messageRoutes);
 
 //Unhandled Routes
 app.all("*", (req, res, next) => {
