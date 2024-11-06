@@ -9,6 +9,7 @@ import { useSearchUser } from "../../hooks/useSearchUser";
 
 import LeaveModal from "../LeaveModal/LeaveModal";
 
+//TODO : Remove users from group
 function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
   const [chatName, setChatName] = useState(null);
   const [isRenameLoading, setIsRenameLoading] = useState(false);
@@ -68,7 +69,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
         throw new Error("Unauthorized");
       }
 
-      if (chatName?.length <= 3) {
+      if (chatName?.length <= 3 || chatName?.length === undefined) {
         throw new Error("A group name must be longer than 3 characters");
       }
 
@@ -131,7 +132,6 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
         },
         config
       );
-      console.log(response);
 
       if (response?.status !== 200) {
         throw new Error("Problem while adding member to group chat");
