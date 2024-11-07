@@ -9,8 +9,11 @@ import CreateGroup from "../CreateGroup/CreateGroup";
 import SingleGroupChat from "../SingleGroupChat/SingleGroupChat";
 
 function Mychats() {
+  console.log("here");
   const { chats, isLoading } = useContext(ChatContext);
   const { id } = useParams();
+
+  console.log(chats);
 
   const [isVisible, setIsVisible] = useState(false);
 

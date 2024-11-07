@@ -10,9 +10,13 @@ function SingleChat({ chat, isActive }) {
     >
       {chat.latestMessage ? (
         <>
-          <img src={chat.users[1].pic} alt="" />
-          <h3>{chat.users[1].name} </h3>
-          <p className={styles.author}>{chat.latestMessage}</p> <p>Message</p>
+          <img src={chat.users[1]?.pic} alt="" />
+          <div>
+            <h3>{chat.users[1]?.name} </h3>
+            <p className={styles.author}>{chat.latestMessage.sender.name}</p>
+            {" :"}
+            <p>{chat.latestMessage.content}</p>
+          </div>
         </>
       ) : (
         <>

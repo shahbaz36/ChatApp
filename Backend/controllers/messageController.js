@@ -35,7 +35,7 @@ exports.sendMessage = catchAsync(async (req, res, next) => {
 
     res.status(201).json({
       status: "success",
-      // data: message,
+      data: message,
     });
   } catch (error) {
     console.log(error);
