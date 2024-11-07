@@ -9,7 +9,8 @@ import Spinner from "../Spinner/Spinner";
 function LeaveModal({ setShowModal, message, chatId, setSelectedChat }) {
   const [isLeavingGroup, setIsLeavingGroup] = useState(false);
   const [leavingGroupError, setLeavingGroupError] = useState(null);
-  const { user } = useContext(ChatContext);
+  const { user, setRefresh } = useContext(ChatContext);
+
   console.log("confirm modal");
 
   const [cookies] = useCookies(["jwt"]);
@@ -31,7 +32,7 @@ function LeaveModal({ setShowModal, message, chatId, setSelectedChat }) {
         },
       };
 
-      const response = await axios.put(
+      const response = await axios.patch(
         "http://localhost:3030/api/v1/chats/groupRemove",
         {
           chatId,
@@ -43,8 +44,8 @@ function LeaveModal({ setShowModal, message, chatId, setSelectedChat }) {
       if (response?.status !== 200) {
         throw new Error("Problem while leaving group chat");
       }
-
       setSelectedChat(null);
+      setRefresh(true);
     } catch (error) {
       setLeavingGroupError(error.message);
     } finally {

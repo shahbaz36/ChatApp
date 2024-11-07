@@ -6,6 +6,7 @@ import { useCookies } from "react-cookie";
 import ErrorPopup from "../Error/Error";
 import axios from "axios";
 import Spinner from "../Spinner/Spinner";
+import { ChatContext } from "../../Context/ChatContext";
 
 function CreateGroup({ setIsVisible }) {
   const [chatName, setChatName] = useState("");
@@ -14,6 +15,7 @@ function CreateGroup({ setIsVisible }) {
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const [cookies] = useCookies(["jwt"]);
+  const { setRefresh } = useContext(ChatContext);
 
   const handleSearchUser = (e) => {
     setSearch(e.target.value);
@@ -75,6 +77,8 @@ function CreateGroup({ setIsVisible }) {
       if (response.status === 201) {
         setIsVisible(false);
       }
+
+      setRefresh(true);
     } catch (error) {
       setCreateGroupError(error.message);
     } finally {

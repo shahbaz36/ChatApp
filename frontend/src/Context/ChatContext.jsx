@@ -35,7 +35,7 @@ const ChatProvider = ({ children }) => {
           };
 
           const response = await axios.get("/api/v1/chats", config);
-
+          console.log(response);
           if (response.status === 200) {
             setIsAuth(true);
           }

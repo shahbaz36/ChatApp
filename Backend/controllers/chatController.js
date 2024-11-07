@@ -10,14 +10,16 @@ exports.getUserChats = catchAsync(async (req, res, next) => {
     users: { $elemMatch: { $eq: user._id } },
   })
     .populate("users", "-password")
-    .populate("groupAdmin", "-password")
     .populate("latestMessage")
+    .populate("groupAdmin", "-password")
     .sort({ updatedAt: -1 });
 
   const result = await User.populate(chatData, {
     path: "latestMessage.sender",
     select: "name pic email",
   });
+
+  console.log(result);
 
   res.status(200).json({
     status: "success",

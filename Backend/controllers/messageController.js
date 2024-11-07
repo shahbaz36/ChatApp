@@ -18,27 +18,39 @@ exports.sendMessage = catchAsync(async (req, res, next) => {
     content: content,
     chat: chatId,
   };
+
   try {
-    const message = await Message.create(newMessage);
+    var message = await Message.create(newMessage);
 
     //   message = await message.populate("sender", "name pic").execPopulate();
-    message = await message
-      .populate("sender", { name: 1, pic: 1 })
-      .execPopulate();
+    message = await message.populate("sender", { name: 1, pic: 1 });
     message = await User.populate(message, {
       path: "chat.users",
       select: "name pic email",
     });
 
-    await Chat.findByIdAndUpdate(req.body.chatId, {
+    await Chat.findByIdAndUpdate(chatId, {
       latestMessage: message,
     });
 
     res.status(201).json({
       status: "success",
-      data: message,
+      // data: message,
     });
   } catch (error) {
+    console.log(error);
     return next(new AppError("Problem while sending message", 400));
   }
+});
+
+exports.getAllMessages = catchAsync(async (req, res, next) => {
+  const messages = await Message.find({ chat: req.params.chatId })
+    .populate("sender", "name pic email")
+    .populate("chat");
+
+  console.log(messages);
+  res.status(200).json({
+    status: "Success",
+    data: messages,
+  });
 });
