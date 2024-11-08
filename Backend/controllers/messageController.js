@@ -48,7 +48,6 @@ exports.getAllMessages = catchAsync(async (req, res, next) => {
     .populate("sender", "name pic email")
     .populate("chat");
 
-  console.log(messages);
   res.status(200).json({
     status: "Success",
     data: messages,

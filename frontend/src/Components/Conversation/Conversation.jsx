@@ -9,6 +9,8 @@ import { useContext, useState } from "react";
 import { ChatContext } from "../../Context/ChatContext";
 import Profile from "../Profile/Profile";
 import GroupChatProfile from "../GroupChatProfile/GroupChatProfile";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 function Conversation() {
   const { id } = useParams();
@@ -76,10 +78,56 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
       </div>
       <div className={styles.chat}>
         <div className={styles.inputWrapper}>
-          <input type="text" placeholder="Enter a message..." />
+          <Messages selectedChat={selectedChat} />
         </div>
       </div>
     </div>
+  );
+}
+
+function Messages({ selectedChat }) {
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [error, setError] = useState(null);
+  const [messages, setMessages] = useState(null);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const [cookies] = useCookies(["jwt"]);
+
+  async function fetchAllChats() {
+    try {
+      setIsLoadingMessages(true);
+      setError(null);
+
+      const token = cookies.jwt;
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://localhost:3030/api/v1/messages/${selectedChat._id}`,
+        config
+      );
+
+      if (response?.status !== 200)
+        throw new Error("Problem while fetching messages ");
+
+      setMessages(response.data.data.messages);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  }
+
+  return (
+    <>
+      <input type="text" placeholder="Enter a message..." />
+    </>
   );
 }
 
