@@ -46,6 +46,7 @@ function Conversation() {
 
 function SelectedChat({ selectedChat, user, setSelectedChat }) {
   const [isVisible, setIsVisible] = useState(false);
+  const [messages, setMessages] = useState(null);
 
   const getSender = (users) => {
     return user._id === users[0]._id ? users[1] : users[0];
@@ -77,20 +78,79 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
           ))}
       </div>
       <div className={styles.chat}>
-        <div className={styles.inputWrapper}>
-          <Messages selectedChat={selectedChat} />
-        </div>
+        <Messages selectedChat={selectedChat} setMessages={setMessages} />
+        <SendMessage
+          selectedChat={selectedChat}
+          setMessages={setMessages}
+          messages={messages}
+        />
       </div>
     </div>
   );
 }
 
-function Messages({ selectedChat }) {
+function SendMessage({ selectedChat, setMessages, messages }) {
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [sendingError, setSendingError] = useState(null);
+  const [message, setMessage] = useState(null);
+
+  const [cookies] = useCookies(["jwt"]);
+
+  function handleTyping(e) {
+    setMessage(e.target.value);
+  }
+
+  async function handleSendMessage(e) {
+    if (e.key === "Enter" && message) {
+      try {
+        e.preventDefault();
+        setIsSendingMessage(true);
+        setSendingError(false);
+
+        const token = cookies.jwt;
+
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        };
+
+        const response = await axios.post(
+          `http://localhost:3030/api/v1/messages/`,
+          { content: message, chatId: selectedChat._id },
+          config
+        );
+        setMessage("");
+
+        if (response?.status !== 201)
+          throw new Error("Problem while sending message");
+        console.log(response);
+        setMessages([...messages, response.data.data]);
+      } catch (error) {
+        setSendingError(error.message);
+      } finally {
+        setIsSendingMessage(false);
+      }
+    }
+  }
+
+  return (
+    <>
+      <form className={styles.inputWrapper} onKeyDown={handleSendMessage}>
+        <input
+          type="text"
+          placeholder="Enter a message..."
+          onChange={handleTyping}
+        />
+      </form>
+    </>
+  );
+}
+
+function Messages({ selectedChat, setMessages }) {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [error, setError] = useState(null);
-  const [messages, setMessages] = useState(null);
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
-  const [message, setMessage] = useState(null);
 
   const [cookies] = useCookies(["jwt"]);
 
@@ -126,7 +186,7 @@ function Messages({ selectedChat }) {
 
   return (
     <>
-      <input type="text" placeholder="Enter a message..." />
+      <div>Messages</div>
     </>
   );
 }
