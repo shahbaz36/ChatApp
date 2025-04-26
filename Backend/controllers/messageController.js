@@ -38,7 +38,6 @@ exports.sendMessage = catchAsync(async (req, res, next) => {
       data: message,
     });
   } catch (error) {
-    console.log(error);
     return next(new AppError("Problem while sending message", 400));
   }
 });

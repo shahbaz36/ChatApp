@@ -9,8 +9,8 @@ import { useContext, useState } from "react";
 import { ChatContext } from "../../Context/ChatContext";
 import Profile from "../Profile/Profile";
 import GroupChatProfile from "../GroupChatProfile/GroupChatProfile";
-import { useCookies } from "react-cookie";
-import axios from "axios";
+import SendMessage from "../SendMessage/SendMessage";
+import Messages from "../Messages/Messages";
 
 function Conversation() {
   const { id } = useParams();
@@ -54,6 +54,7 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
 
   return (
     <div className={styles.conv}>
+      {/* conversation header */}
       <div className={styles.myNav}>
         <h2>
           {selectedChat.isGroupChat
@@ -78,7 +79,11 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
           ))}
       </div>
       <div className={styles.chat}>
-        <Messages selectedChat={selectedChat} setMessages={setMessages} />
+        <Messages
+          selectedChat={selectedChat}
+          setMessages={setMessages}
+          messages={messages}
+        />
         <SendMessage
           selectedChat={selectedChat}
           setMessages={setMessages}
@@ -89,106 +94,101 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
   );
 }
 
-function SendMessage({ selectedChat, setMessages, messages }) {
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
-  const [sendingError, setSendingError] = useState(null);
-  const [message, setMessage] = useState(null);
+// function SendMessage({ selectedChat, setMessages, messages }) {
+//   const [isSendingMessage, setIsSendingMessage] = useState(false);
+//   const [sendingError, setSendingError] = useState(null);
+//   const [message, setMessage] = useState(null);
 
-  const [cookies] = useCookies(["jwt"]);
+//   const [cookies] = useCookies(["jwt"]);
 
-  function handleTyping(e) {
-    setMessage(e.target.value);
-  }
+//   function handleTyping(e) {
+//     setMessage(e.target.value);
+//   }
 
-  async function handleSendMessage(e) {
-    if (e.key === "Enter" && message) {
-      try {
-        e.preventDefault();
-        setIsSendingMessage(true);
-        setSendingError(false);
+//   async function handleSendMessage(e) {
+//     if (e.key === "Enter" && message) {
+//       try {
+//         e.preventDefault();
+//         setIsSendingMessage(true);
+//         setSendingError(false);
 
-        const token = cookies.jwt;
+//         const token = cookies.jwt;
 
-        const config = {
-          headers: {
-            "Content-type": "application/json",
-            authorization: `Bearer ${token}`,
-          },
-        };
+//         const config = {
+//           headers: {
+//             "Content-type": "application/json",
+//             authorization: `Bearer ${token}`,
+//           },
+//         };
 
-        const response = await axios.post(
-          `http://localhost:3030/api/v1/messages/`,
-          { content: message, chatId: selectedChat._id },
-          config
-        );
-        setMessage("");
+//         const response = await axios.post(
+//           `http://localhost:3030/api/v1/messages/`,
+//           { content: message, chatId: selectedChat._id },
+//           config
+//         );
+//         setMessage("");
 
-        if (response?.status !== 201)
-          throw new Error("Problem while sending message");
-        console.log(response);
-        setMessages([...messages, response.data.data]);
-      } catch (error) {
-        setSendingError(error.message);
-      } finally {
-        setIsSendingMessage(false);
-      }
-    }
-  }
+//         if (response?.status !== 201)
+//           throw new Error("Problem while sending message");
+//         console.log(response);
+//         setMessages([...messages, response.data.data]);
+//       } catch (error) {
+//         setSendingError(error.message);
+//       } finally {
+//         setIsSendingMessage(false);
+//         setMessage("");
+//       }
+//     }
+//   }
 
-  return (
-    <>
-      <form className={styles.inputWrapper} onKeyDown={handleSendMessage}>
-        <input
-          type="text"
-          placeholder="Enter a message..."
-          onChange={handleTyping}
-        />
-      </form>
-    </>
-  );
-}
+//   return (
+//     <form className={styles.inputWrapper} onKeyDown={handleSendMessage}>
+//       <input
+//         type="text"
+//         placeholder="Enter a message..."
+//         onChange={handleTyping}
+//       />
+//     </form>
+//   );
+// }
 
-function Messages({ selectedChat, setMessages }) {
-  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-  const [error, setError] = useState(null);
+// function Messages({ selectedChat, setMessages }) {
+//   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
+//   const [error, setError] = useState(null);
 
-  const [cookies] = useCookies(["jwt"]);
+//   const [cookies] = useCookies(["jwt"]);
 
-  async function fetchAllChats() {
-    try {
-      setIsLoadingMessages(true);
-      setError(null);
+//   async function fetchAllChats() {
+//     try {
+//       setIsLoadingMessages(true);
+//       setError(null);
 
-      const token = cookies.jwt;
+//       const token = cookies.jwt;
 
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      };
+//       const config = {
+//         headers: {
+//           "Content-type": "application/json",
+//           authorization: `Bearer ${token}`,
+//         },
+//       };
 
-      const response = await axios.get(
-        `http://localhost:3030/api/v1/messages/${selectedChat._id}`,
-        config
-      );
+//       const response = await axios.get(
+//         `http://localhost:3030/api/v1/messages/${selectedChat._id}`,
+//         config
+//       );
 
-      if (response?.status !== 200)
-        throw new Error("Problem while fetching messages ");
+//       if (response?.status !== 200)
+//         throw new Error("Problem while fetching messages ");
 
-      setMessages(response.data.data.messages);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoadingMessages(false);
-    }
-  }
+//       setMessages(response.data.data.messages);
+//     } catch (error) {
+//       setError(error.message);
+//     } finally {
+//       setIsLoadingMessages(false);
+//     }
+//   }
 
-  return (
-    <>
-      <div>Messages</div>
-    </>
-  );
-}
+//   return <div>{isLoadingMessages ? <Spinner /> : <div>Messages</div>}</div>;
+// }
 
 export default Conversation;

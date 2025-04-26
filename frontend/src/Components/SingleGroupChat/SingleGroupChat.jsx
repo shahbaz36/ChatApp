@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import styles from "./SingleGroupChat.module.css";
 
-function SingleGroupChat({ chat, isActive }) {
+function SingleGroupChat({ chat, isActive, user }) {
   return (
     <NavLink
       className={`${styles.chat}  ${isActive ? styles.active : ""}`}

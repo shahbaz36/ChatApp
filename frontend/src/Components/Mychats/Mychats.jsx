@@ -11,6 +11,7 @@ import SingleGroupChat from "../SingleGroupChat/SingleGroupChat";
 function Mychats() {
   const { chats, isLoading } = useContext(ChatContext);
   const { id } = useParams();
+  const { user } = useContext(ChatContext);
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -33,12 +34,14 @@ function Mychats() {
               chat={chat}
               isActive={id === chat._id}
               key={chat._id}
+              user={user}
             />
           ) : (
             <SingleChat
               chat={chat}
               isActive={id === chat.users[1]?._id}
               key={chat._id}
+              user={user}
             />
           )
         )}

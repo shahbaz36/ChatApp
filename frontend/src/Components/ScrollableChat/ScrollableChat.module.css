@@ -1,0 +1,28 @@
+.allMsg {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  height: 70vh;
+  box-sizing: border-box;
+}
+
+.msgRight {
+  align-self: flex-end;
+  margin-top: 3px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.msgLeft {
+  align-self: flex-start;
+  margin-top: 3px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.msgCommon {
+  padding: 5px 10px;
+  font-size: medium;
+  background-color: white;
+  border-radius: 10px;
+}
