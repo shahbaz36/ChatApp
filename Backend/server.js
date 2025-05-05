@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const app = require("./app");
 
 //Connecting to DB
-dotenv.config({ path: "../config.env" });
+dotenv.config({ path: "./config.env" });
 const db = process.env.DATABASE.replace(
   "<db_password>",
   process.env.DATABASE_PASSWORD
@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
 
   socket.on('join chat', (room) => {
     socket.join(room);
-    console.log("User joined room : " + room);
+    // console.log("User joined room : " + room);
   })
 
   socket.on('new message', (newMessageReceived) => {
@@ -60,6 +60,7 @@ io.on('connection', (socket) => {
 })
 
 process.on("unhandledRejection", (err) => {
+  console.log(err);
   console.log(err.name, err.message);
   console.log("UNHANDLED REJECTION! 💥 Shutting down...");
   process.exit(1);

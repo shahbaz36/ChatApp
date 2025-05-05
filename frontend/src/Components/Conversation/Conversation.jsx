@@ -134,7 +134,7 @@ function SelectedChat({
 
 function Messages({ selectedChat, setMessages, messages }) {
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
 
   // const { notification, setNotification, setRefresh, refresh } =
   //   useContext(ChatContext);
