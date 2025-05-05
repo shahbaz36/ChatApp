@@ -17,33 +17,36 @@ function ScrollableChat({ messages }) {
   }, [messages]);
 
   return (
-    <div className={styles.allMsg} ref={scrollRef}>
-      {messages.map((msg, index) => {
-        const showInitials =
-          index === 0 || messages[index - 1].sender._id !== msg.sender._id;
+  {messages.length === 0 ? (
+        <p className={styles.noMessages}>No messages to display</p>
+      ) : (
+        messages.map((msg, index) => {
+          const showInitials =
+            index === 0 || messages[index - 1].sender._id !== msg.sender._id;
 
-        return (
-          <p
-            className={`${
-              getSender(msg.sender) ? styles.msgRight : styles.msgLeft
-            } ${styles.msgCommon}`}
-            key={`${msg._id}-${index}`}
-          >
-            {msg.chat.isGroupChat && showInitials ? (
-              <>
-                <strong>
-                  {msg.sender.name.charAt(0).toUpperCase() +
-                    msg.sender.name.slice(1)}
-                  :
-                </strong>{" "}
-                {msg.content}
-              </>
-            ) : (
-              msg.content
-            )}
-          </p>
-        );
-      })}
+          return (
+            <p
+              className={`${
+                getSender(msg.sender) ? styles.msgRight : styles.msgLeft
+              } ${styles.msgCommon}`}
+              key={`${msg._id}-${index}`}
+            >
+              {msg.chat.isGroupChat && showInitials ? (
+                <>
+                  <strong>
+                    {msg.sender.name.charAt(0).toUpperCase() +
+                      msg.sender.name.slice(1)}
+                    :
+                  </strong>{" "}
+                  {msg.content}
+                </>
+              ) : (
+                msg.content
+              )}
+            </p>
+          );
+        })
+      )}
     </div>
   );
 }
