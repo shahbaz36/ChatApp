@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const app = require("./app");
 
 //Connecting to DB
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "../config.env" });
 const db = process.env.DATABASE.replace(
   "<db_password>",
   process.env.DATABASE_PASSWORD
@@ -25,7 +25,8 @@ const server = app.listen(port, () => {
 const io = require('socket.io')(server, {
   pingTimeout: 60000,
   cors: {
-    origin: 'http://localhost:5173'
+    // origin: 'http://localhost:5173'
+    origin: 'https://talksapp.onrender.com'
   }
 })
 

@@ -33,7 +33,7 @@ function LeaveModal({ setShowModal, message, chatId, setSelectedChat }) {
       };
 
       const response = await axios.patch(
-        "http://localhost:3030/api/v1/chats/groupRemove",
+        "https://talksapp.onrender.com/api/v1/chats/groupRemove",
         {
           chatId,
           memberId: user._id,

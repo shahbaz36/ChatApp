@@ -84,7 +84,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
       };
 
       const response = await axios.patch(
-        "http://localhost:3030/api/v1/chats/rename",
+        "https://talksapp.onrender.com/api/v1/chats/rename",
         {
           chatId: groupChat._id,
           chatName,
@@ -129,7 +129,7 @@ function GroupChatProfile({ groupChat, setShowProfile, setSelectedChat }) {
       };
 
       const response = await axios.patch(
-        "http://localhost:3030/api/v1/chats/groupAdd",
+        "https://talksapp.onrender.com/api/v1/chats/groupAdd",
         {
           chatId: groupChat._id,
           newMember: selectedUser._id,

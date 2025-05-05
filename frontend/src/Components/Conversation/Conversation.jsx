@@ -156,7 +156,7 @@ function Messages({ selectedChat, setMessages, messages }) {
       };
 
       const response = await axios.get(
-        `http://localhost:3030/api/v1/messages/${selectedChat._id}`,
+        `https://talksapp.onrender.com/api/v1/messages/${selectedChat._id}`,
         config
       );
 
@@ -270,7 +270,7 @@ function SendMessage({
       };
 
       const { data } = await axios.post(
-        `http://localhost:3030/api/v1/messages/`,
+        `https://talksapp.onrender.com/api/v1/messages/`,
         { content: message.trim(), chatId: selectedChat._id },
         config
       );
