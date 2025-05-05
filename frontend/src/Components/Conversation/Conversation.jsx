@@ -21,7 +21,7 @@ import ScrollableChat from "../ScrollableChat/ScrollableChat";
 import Lottie from "react-lottie";
 import typingAnimation from "../../animations/typing.json";
 
-const ENDPOINT = "http://localhost:3030";
+const ENDPOINT = "https://talksapp.onrender.com";
 var socket;
 
 function Conversation() {
