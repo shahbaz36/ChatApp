@@ -18,7 +18,7 @@ function ScrollableChat({ messages }) {
 
   return (
     <div className={styles.allMsg} ref={scrollRef}>
-      {messages.length === 0 ? (
+      {!messages||messages.length === 0 ? (
         <p className={styles.noMessages}>No messages to display</p>
       ) : (
         messages.map((msg, index) => {
