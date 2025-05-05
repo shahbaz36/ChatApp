@@ -4,19 +4,43 @@ import { useAccessChat } from "../../hooks/useChat";
 import { useParams } from "react-router-dom";
 import ErrorPopup from "../Error/Error";
 import { Eye } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { ChatContext } from "../../Context/ChatContext";
 import Profile from "../Profile/Profile";
 import GroupChatProfile from "../GroupChatProfile/GroupChatProfile";
-import SendMessage from "../SendMessage/SendMessage";
-import Messages from "../Messages/Messages";
+
+//Imports for Messages
+import io from "socket.io-client";
+import axios from "axios";
+import { useCookies } from "react-cookie";
+import Spinner from "../Spinner/Spinner";
+import ScrollableChat from "../ScrollableChat/ScrollableChat";
+
+//Imports for SendMessage
+import Lottie from "react-lottie";
+import typingAnimation from "../../animations/typing.json";
+
+const ENDPOINT = "http://localhost:3030";
+var socket;
 
 function Conversation() {
   const { id } = useParams();
   const [isAccessingChat, selectedChat, setSelectedChat, error] =
     useAccessChat(id);
   const { user } = useContext(ChatContext);
+
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+  }, []);
 
   if (!id) {
     return (
@@ -35,6 +59,9 @@ function Conversation() {
           selectedChat={selectedChat}
           setSelectedChat={setSelectedChat}
           user={user}
+          isTyping={isTyping}
+          setIsTyping={setIsTyping}
+          socketConnected={socketConnected}
         />
       )}
       {error && (
@@ -44,7 +71,14 @@ function Conversation() {
   );
 }
 
-function SelectedChat({ selectedChat, user, setSelectedChat }) {
+function SelectedChat({
+  selectedChat,
+  user,
+  setSelectedChat,
+  isTyping,
+  setIsTyping,
+  socketConnected,
+}) {
   const [isVisible, setIsVisible] = useState(false);
   const [messages, setMessages] = useState(null);
 
@@ -75,6 +109,7 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
             <Profile
               user={getSender(selectedChat.users)}
               setShowProfile={setIsVisible}
+              loggedUser={false}
             />
           ))}
       </div>
@@ -88,107 +123,216 @@ function SelectedChat({ selectedChat, user, setSelectedChat }) {
           selectedChat={selectedChat}
           setMessages={setMessages}
           messages={messages}
+          isTyping={isTyping}
+          setIsTyping={setIsTyping}
+          socketConnected={socketConnected}
         />
       </div>
     </div>
   );
 }
 
-// function SendMessage({ selectedChat, setMessages, messages }) {
-//   const [isSendingMessage, setIsSendingMessage] = useState(false);
-//   const [sendingError, setSendingError] = useState(null);
-//   const [message, setMessage] = useState(null);
+function Messages({ selectedChat, setMessages, messages }) {
+  const [isLoadingMessages, setIsLoadingMessages] = useState(true);
+  const [error, setError] = useState(null);
 
-//   const [cookies] = useCookies(["jwt"]);
+  // const { notification, setNotification, setRefresh, refresh } =
+  //   useContext(ChatContext);
 
-//   function handleTyping(e) {
-//     setMessage(e.target.value);
-//   }
+  const [cookies] = useCookies(["jwt"]);
 
-//   async function handleSendMessage(e) {
-//     if (e.key === "Enter" && message) {
-//       try {
-//         e.preventDefault();
-//         setIsSendingMessage(true);
-//         setSendingError(false);
+  async function fetchAllMessages() {
+    try {
+      setIsLoadingMessages(true);
+      setError(null);
 
-//         const token = cookies.jwt;
+      const token = cookies.jwt;
 
-//         const config = {
-//           headers: {
-//             "Content-type": "application/json",
-//             authorization: `Bearer ${token}`,
-//           },
-//         };
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      };
 
-//         const response = await axios.post(
-//           `http://localhost:3030/api/v1/messages/`,
-//           { content: message, chatId: selectedChat._id },
-//           config
-//         );
-//         setMessage("");
+      const response = await axios.get(
+        `http://localhost:3030/api/v1/messages/${selectedChat._id}`,
+        config
+      );
 
-//         if (response?.status !== 201)
-//           throw new Error("Problem while sending message");
-//         console.log(response);
-//         setMessages([...messages, response.data.data]);
-//       } catch (error) {
-//         setSendingError(error.message);
-//       } finally {
-//         setIsSendingMessage(false);
-//         setMessage("");
-//       }
-//     }
-//   }
+      if (response?.status !== 200)
+        throw new Error("Problem while fetching messages ");
 
-//   return (
-//     <form className={styles.inputWrapper} onKeyDown={handleSendMessage}>
-//       <input
-//         type="text"
-//         placeholder="Enter a message..."
-//         onChange={handleTyping}
-//       />
-//     </form>
-//   );
-// }
+      setMessages(response.data.data);
 
-// function Messages({ selectedChat, setMessages }) {
-//   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
-//   const [error, setError] = useState(null);
+      socket.emit("join chat", selectedChat._id);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  }
 
-//   const [cookies] = useCookies(["jwt"]);
+  useEffect(() => {
+    fetchAllMessages();
+    // selectedChatCompare = selectedChat;
+  }, [selectedChat]);
 
-//   async function fetchAllChats() {
-//     try {
-//       setIsLoadingMessages(true);
-//       setError(null);
+  useEffect(() => {
+    socket.on("message received", (newMessageReceived) => {
+      // if (
+      //   !selectedChatCompare ||
+      //   selectedChatCompare._id !== newMessageReceived.chat._id
+      // ) {
+      //   console.log(notification);
+      //   if (!notification.includes(newMessageReceived)) {
+      //     setNotification([newMessageReceived, ...notification]);
+      //     setRefresh(!refresh);
+      //     console.log(notification + "---------------");
+      //   }
+      // } else {
+      setMessages([...(messages || []), newMessageReceived]);
+      // }
+    });
+  });
 
-//       const token = cookies.jwt;
+  return (
+    <div className={styles.msgBox}>
+      {isLoadingMessages ? <Spinner /> : <ScrollableChat messages={messages} />}
+    </div>
+  );
+}
 
-//       const config = {
-//         headers: {
-//           "Content-type": "application/json",
-//           authorization: `Bearer ${token}`,
-//         },
-//       };
+function SendMessage({
+  selectedChat,
+  setMessages,
+  messages,
+  socketConnected,
+  isTyping,
+  setIsTyping,
+}) {
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [sendingError, setSendingError] = useState(null);
+  const [message, setMessage] = useState("");
+  const [cookies] = useCookies(["jwt"]);
 
-//       const response = await axios.get(
-//         `http://localhost:3030/api/v1/messages/${selectedChat._id}`,
-//         config
-//       );
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: typingAnimation,
+    rendererSettings: {
+      preserveAspectRation: "xMidYMid slice",
+    },
+  };
 
-//       if (response?.status !== 200)
-//         throw new Error("Problem while fetching messages ");
+  const handleTyping = (e) => {
+    setMessage(e.target.value);
+    if (!socketConnected) return;
 
-//       setMessages(response.data.data.messages);
-//     } catch (error) {
-//       setError(error.message);
-//     } finally {
-//       setIsLoadingMessages(false);
-//     }
-//   }
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
 
-//   return <div>{isLoadingMessages ? <Spinner /> : <div>Messages</div>}</div>;
-// }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && isTyping) {
+        socket.emit("stop typing", selectedChat._id);
+        setIsTyping(false);
+      }
+    }, timerLength);
+  };
+
+  const handleSendMessage = async (e) => {
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+
+    if (!message.trim()) {
+      setSendingError("Can't send empty messages");
+      return;
+    }
+
+    try {
+      socket.emit("stop typing", selectedChat._id);
+      setIsSendingMessage(true);
+      setSendingError(null);
+
+      const token = cookies.jwt;
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `http://localhost:3030/api/v1/messages/`,
+        { content: message.trim(), chatId: selectedChat._id },
+        config
+      );
+
+      if (data?.status !== "success")
+        throw new Error("Problem while sending message");
+
+      if (socket) {
+        socket.emit("new message", data.data);
+      } else {
+        console.error("Socket is not initialized");
+      }
+
+      setMessages([...messages, data.data]);
+
+      setMessage("");
+      // console.log(messages); //React state updates are asynchronous!!
+    } catch (error) {
+      setSendingError(error.message || "An error occurred");
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   console.log("Updated messages:", messages);
+  // }, [messages]);
+
+  return (
+    <>
+      <form className={styles.inputWrapper}>
+        {" "}
+        {isTyping ? (
+          <div>
+            <Lottie
+              width={70}
+              style={{
+                marginBottom: 0,
+                marginLeft: 0,
+                left: 0,
+                display: "block",
+                position: "absolute",
+                bottom: "100%",
+              }}
+              options={defaultOptions}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+        <input
+          type="text"
+          placeholder="Enter a message..."
+          value={message}
+          onChange={handleTyping}
+          onKeyDown={handleSendMessage}
+          disabled={isSendingMessage}
+        />
+      </form>
+      {sendingError && <ErrorPopup message={sendingError} />}
+    </>
+  );
+}
 
 export default Conversation;

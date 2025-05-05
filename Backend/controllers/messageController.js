@@ -24,11 +24,11 @@ exports.sendMessage = catchAsync(async (req, res, next) => {
 
     //   message = await message.populate("sender", "name pic").execPopulate();
     message = await message.populate("sender", { name: 1, pic: 1 });
+    message = await message.populate("chat");
     message = await User.populate(message, {
       path: "chat.users",
       select: "name pic email",
     });
-
     await Chat.findByIdAndUpdate(chatId, {
       latestMessage: message,
     });

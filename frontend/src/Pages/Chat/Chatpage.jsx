@@ -11,7 +11,12 @@ function Chatpage() {
   const { isLoading } = useContext(ChatContext);
 
   return isLoading ? (
-    <Loading />
+    <div>
+      <Navbar />
+      <div className={styles.container}>
+        <Loading />
+      </div>
+    </div>
   ) : (
     <div>
       <Navbar />

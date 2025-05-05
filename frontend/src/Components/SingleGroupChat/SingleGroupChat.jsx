@@ -9,10 +9,11 @@ function SingleGroupChat({ chat, isActive, user }) {
       key={chat._id}
     >
       {chat.latestMessage ? (
-        <>
+        <div>
           <h3>{chat.chatName} </h3>
-          <p className={styles.author}>{chat.latestMessage}</p> <p>Message</p>
-        </>
+          <p className={styles.author}>{chat.latestMessage.sender.name} :</p>
+          <p>{chat.latestMessage.content}</p>
+        </div>
       ) : (
         <>
           <div>

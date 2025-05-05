@@ -13,15 +13,15 @@ function SingleChat({ chat, isActive, user }) {
   return (
     <NavLink
       className={`${styles.chat}  ${isActive ? styles.active : ""}`}
-      to={`/chats/${chat.users[1]?._id}`}
+      to={`/chats/${getSender(chat.users)?._id}`}
       key={chat._id}
     >
       {chat.latestMessage ? (
         <>
-          <img src={getSender(chat.users).pic} alt="" />
+          <img src={getSender(chat.users)?.pic} alt="" />
           <div>
             <h3>{getSender(chat.users)?.name} </h3>
-            <p className={styles.author}>{chat.latestMessage.sender.name}</p>
+            <p className={styles.author}>{chat.latestMessage.sender?.name}</p>
             {" :"}
             <p>{displayMsg(chat.latestMessage.content)}</p>
           </div>

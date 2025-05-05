@@ -17,6 +17,7 @@
   display: flex;
   flex-direction: column;
   font-size: 22px;
+  height: ;
 }
 .myNav {
   display: flex;
@@ -52,4 +53,28 @@
   margin: 15px;
   background-color: #f2f1e9;
   border-radius: 10px;
+}
+
+.msgBox {
+  overflow: hidden;
+}
+
+.inputWrapper {
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.inputWrapper input {
+  margin: 10px 10px 10px 10px;
+  width: 98%;
+  border: none;
+  background-color: white;
+  padding: 8px 8px 8px 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  outline: none;
 }

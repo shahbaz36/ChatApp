@@ -15,6 +15,9 @@ function Mychats() {
 
   const [isVisible, setIsVisible] = useState(false);
 
+  const getSender = (users) => {
+    return user._id === users[0]._id ? users[1] : users[0];
+  };
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -39,7 +42,7 @@ function Mychats() {
           ) : (
             <SingleChat
               chat={chat}
-              isActive={id === chat.users[1]?._id}
+              isActive={id === getSender(chat.users)?._id}
               key={chat._id}
               user={user}
             />

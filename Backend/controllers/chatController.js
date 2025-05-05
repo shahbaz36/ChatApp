@@ -19,7 +19,6 @@ exports.getUserChats = catchAsync(async (req, res, next) => {
     select: "name pic email",
   });
 
-  console.log(result);
 
   res.status(200).json({
     status: "success",
@@ -35,7 +34,7 @@ exports.checkForGroupChat = catchAsync(async (req, res, next) => {
   const { userId } = req.body;
   const groupChat = await Chat.findById(userId)
     .populate("users", "-password")
-    .populate("groupAdmin", "-password");
+    .populate("groupAdmin", "-password").populate('latestMessage');
 
   if (groupChat?.isGroupChat) {
     return res.status(200).json({

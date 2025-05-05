@@ -15,6 +15,8 @@ const ChatProvider = ({ children }) => {
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
 
+  const [notification, setNotification] = useState([]);
+
   const [cookies] = useCookies(["jwt"]);
 
   useEffect(
@@ -63,7 +65,10 @@ const ChatProvider = ({ children }) => {
         setError,
         isLoading,
         isAuth,
+        refresh,
         setRefresh,
+        notification,
+        setNotification,
       }}
     >
       {children}

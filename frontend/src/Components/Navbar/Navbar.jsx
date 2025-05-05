@@ -52,7 +52,13 @@ function Navbar() {
           />
         </div>
       </div>
-      {showProfile && <Profile user={user} setShowProfile={setShowProfile} />}
+      {showProfile && (
+        <Profile
+          user={user}
+          setShowProfile={setShowProfile}
+          loggedUser={true}
+        />
+      )}
       <Sidedrawer
         onDrawerClose={handleDrawerClose}
         drawer={drawer}
